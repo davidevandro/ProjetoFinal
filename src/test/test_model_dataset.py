@@ -1,6 +1,6 @@
 # coding: latin1
 
-# Script Name		: test_model_database.py
+# Script Name		: test_model_dataset.py
 # Author			: David Martins
 # Created			: 09/06/2016
 # Last Modified		: 
@@ -13,7 +13,7 @@
 import unittest2 as ut
 import pandas as pd
 import numpy as np
-from src.model  import datasetmodel as dm
+from model  import datasetmodel as dm
 import csv
 import os
 import pandas.util.testing as pdt
@@ -22,7 +22,7 @@ class DatasetModelTest(ut.TestCase):
 	'''Classe de testes unitários da classe DatasetModel'''
 	
 	def test_dados_eh_dataframe(self):
-		'Verifica se o atributo *dados* é do tipo pandas.DataFrame'
+		'''Verifica se o atributo *dados* é do tipo pandas.DataFrame'''
 		ds = dm.DatasetModel()
 		self.assertIsInstance(ds.dados, pd.DataFrame)
 		

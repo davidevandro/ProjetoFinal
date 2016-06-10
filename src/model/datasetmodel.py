@@ -48,9 +48,12 @@ class DatasetModel():
 		
 		nome	: string contendo o nome do arquivo csv
 		'''
-		
-		self.dados = pd.DataFrame.from_csv(nome)
-		self.atualiza_atributos()
+		try:
+			self.dados = pd.DataFrame.from_csv(nome)
+			self.atualiza_atributos()
+			return True
+		except:
+			return False
 	
 	def remover_atributo(self, nomeAtributo):
 		'''Remove um atributo pelo nome dele e atualiza DatasetModel
@@ -59,7 +62,6 @@ class DatasetModel():
 		
 		nomeAtributo: string contendo o nome do atributo a ser removido
 		'''
-		
 		if nomeAtributo in self.atributos:
 			self.dados.pop(nomeAtributo)
 			self.atualiza_atributos()
