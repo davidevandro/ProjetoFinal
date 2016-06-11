@@ -10,88 +10,85 @@
 
 # Description		: Contém a classe que controla a atualização das telas e adquire os dados dos modelos
 
+
+
+from model import datasetmodel as dm
+import os
+
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-from model import datasetmodel as dm
-from view import mainGui as gui
-import os
-
-class Controlador(QMainWindow):
+class Controlador():
 	'''Classe que controla e atualiza as telas com base nos dados adquiridos das classes de modelo
 	
 	Atributos:
 	
-	view		: QMainWindow montada no Qt Designer
-	dataset		: DatasetModel com os dados carregados através da tela
+	_view			: MainGui que o controlador está controlando
+	_dataset		: DatasetModel com os dados carregados através da tela
 	'''
 	
-	def __init__(self, parent = None):
+	def __init__(self, view):
 		'''Construtor da classe Controlador. Inicia seus atributos e conecta os sinais dos botões da tela
-		a métodos'''
+		a métodos
 		
-		super(Controlador, self).__init__(parent)
-		self.view = gui.Ui_MainWindow()
-		self.view.setupUi(self)
-	
-		self.dataset = dm.DatasetModel()
+		Atributos:
 		
-		self.view.abrirButton.clicked.connect(self.abrir_janela_para_escolher_arquivo)
+		view		: MainGui que o controlador está controlando
+		'''
 		
-	def abrir_janela_para_escolher_arquivo(self):
-		'''Abre uma janela para o usuário escolher um arquivo e chama o método abrir'''
-	
-		#o endereço do arquivo + nome estão no primeiro campo de nome
-		nome = QFileDialog.getOpenFileName(self, "Abrir", "", "Arquivos de Texto (*.csv)")[0]
-		self.abrir(nome)
-		
+		#conecta controlador a tela
+		self._view = view
+		#conecta controlador ao modelo de Dataset
+		self._dataset = dm.DatasetModel()
+				
 	def abrir(self, nome):
 		'''Abre o arquivo com nome *nome*  e carrega esse arquivo em DatasetModel e 
 		atualiza a aba Dados da tela'''
 				
-		self.view.statusbar.showMessage(u"Abrindo dataset...")
-		if self.dataset.ler_csv(nome):
-			self.view.statusbar.showMessage(u"Dataset aberto")
+		self._view.statusbar.showMessage(u"Abrindo dataset...")
+		if self._dataset.ler_csv(nome):
+			self._view.statusbar.showMessage(u"Dataset aberto")
 			
-			#carrega o dataset numa tabela mostrada na aba Dados
-			for i in range(self.dataset.natributos):
-				currentRowCount = self.view.tabelaAtributos.rowCount()
-				self.view.tabelaAtributos.insertRow(currentRowCount)
+			atributos = self._dataset.get_atributos()
+			#carrega o dataset numa tabela mostrada na aba Dados		
+			for i in range(self._dataset.get_natributos()):
+				currentRowCount = self._view.tabelaAtributos.rowCount()
+				self._view.tabelaAtributos.insertRow(currentRowCount)
 				item = QTableWidgetItem(str(i+1))
 				item.setFlags(Qt.ItemIsEnabled)
 				item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-				self.view.tabelaAtributos.setItem(currentRowCount, 0, item)
+				self._view.tabelaAtributos.setItem(currentRowCount, 0, item)
 				item = QTableWidgetItem("")
 				#para tornar o item da tabela marcável
 				item.setFlags(Qt.ItemIsEnabled| Qt.ItemIsUserCheckable)
 				item.setCheckState(Qt.Unchecked)
 				item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-				self.view.tabelaAtributos.setItem(currentRowCount,1, item)
-				item = QTableWidgetItem(self.dataset.atributos[i])
+				self._view.tabelaAtributos.setItem(currentRowCount,1, item)
+				item = QTableWidgetItem(atributos[i])
 				item.setFlags(Qt.ItemIsEnabled)
 				item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-				self.view.tabelaAtributos.setItem(currentRowCount,2, item)
+				self._view.tabelaAtributos.setItem(currentRowCount,2, item)
 				
-			self.view.tabelaAtributos.itemClicked.connect(self.ativar_botao_remover)
+			self._view.tabelaAtributos.itemClicked.connect(self.ativar_botao_remover)
 			
 			#pega somente o nome do arquivo sem o seu endereço
-			head, tail = os.path.split(nome)
+			__, tail = os.path.split(nome)
 			
-			self.view.nomeLabel.setText(tail)
-			self.view.instanciaLabel.setText(str(self.dataset.ninstancias))
-			self.view.atributosLabel.setText(str(self.dataset.natributos))
+			self._view.nomeLabel.setText(tail)
+			self._view.instanciaLabel.setText(str(self._dataset.get_ninstancias()))
+			self._view.atributosLabel.setText(str(self._dataset.get_natributos()))
 			
 			return True
 		else:
 			self.view.statusbar.showMessage(u"Nenhum dataset selecionado")
 			return False
 		
-	def ativar_botao_remover(self, item):
+	'''def ativar_botao_remover(self, item):
 		
 		ativos = 0
 		
 		for i in range(self.view.tabelaAtributos.rowCount()):
-			if self.view.tabelaAtributos.cellWidget(i,1).findChild(type(QCheckBox())).isChecked():
+			if self.view.tabela-Atributos.cellWidget(i,1).findChild(type(QCheckBox())).isChecked():
 				ativos += 1
 			else: 
 				ativos -= 1
@@ -99,4 +96,4 @@ class Controlador(QMainWindow):
 		if ativos == 0:
 			self.view.removerButton.setEnabled(False)
 		else:
-			self.view.removerButton.setEnabled(True)
+			self.view.removerButton.setEnabled(True)'''
