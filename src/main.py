@@ -8,9 +8,9 @@
 
 # Modifications		: 
 
-# Description		: Executa o controlador e exibe a tela do software
+# Description		: Executa o MainGui e exibe a tela do software
 
-from controller.controlador import Controlador
+from view.mainGui import MainGui
 import sys
 
 from PySide.QtCore import *
@@ -19,6 +19,6 @@ from PySide.QtGui import *
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
-	c = Controlador()
-	c.show()
+	tela = MainGui()
+	tela.show()
 	sys.exit(app.exec_())
