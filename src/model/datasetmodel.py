@@ -4,9 +4,10 @@
 # Author			: David Martins
 # Created			: 10/06/2016
 # Last Modified		: 11/06/2016
-# Version			: 1.0.1
+# Version			: 1.0.2
 
 # Modifications		: 1.0.1 - Atributos tornados privados e implementados getters e setters
+#					  1.0.2 - Adaptação do método remover_atributo para remover_atributos
 
 # Description		: Contém a classe que encapsula o dataset e permite algumas operações
 
@@ -46,6 +47,11 @@ class DatasetModel():
 		Parâmetros:
 		
 		nome	: string contendo o nome do arquivo csv
+		
+		Retorna:
+		
+		True	: se conseguir carregar o csv no DatasetModel
+		False	: caso não consiga carregar o csv no DatasetModel
 		'''
 		try:
 			self._dados = pd.DataFrame.from_csv(nome)
@@ -54,19 +60,27 @@ class DatasetModel():
 		except:
 			return False
 	
-	def remover_atributo(self, nomeAtributo):
-		'''Remove um atributo pelo nome dele e atualiza DatasetModel
+	def remover_atributos(self, atributos):
+		'''Remove atributos pelos nomes deles e atualiza DatasetModel
 		
 		Parâmetros:
 		
-		nomeAtributo: string contendo o nome do atributo a ser removido
+		atributos: lista de strings contendo os nomes do atributos a serem removido
+		
+		Retorna:
+		
+		True:	se conseguir remover todos os atributos
+		False:	se algum atributo não for válido
 		'''
-		if nomeAtributo in self._atributos:
-			self._dados.pop(nomeAtributo)
-			self.atualiza_atributos()
-			return True
-		else:
-			return False
+		for elemento in atributos:
+			if elemento not in self._atributos:
+				return False
+			
+		for elemento in atributos:
+			self._dados.pop(elemento)
+					
+		self.atualiza_atributos()
+		return True
 		
 	def get_dados(self):
 		'''Retorna o atributo *_dados*'''
