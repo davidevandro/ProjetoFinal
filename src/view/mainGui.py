@@ -29,6 +29,7 @@ class MainGui(QMainWindow, Ui_MainWindow):
         self._controlador = Controlador(self)
         
         self.abrirButton.clicked.connect(self.abrir_janela_para_escolher_arquivo)
+        self.tabelaAtributos.itemClicked.connect(self._controlador.atualizar_botao_remover)
     
     def abrir_janela_para_escolher_arquivo(self):
         '''Abre uma janela para o usuário escolher um arquivo e chama o método abrir'''
