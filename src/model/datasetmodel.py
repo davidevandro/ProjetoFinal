@@ -27,9 +27,9 @@ class DatasetModel():
 		'''Construtor da classe DatasetModel. Garante que dados seja do tipo dataframe e que os demais 
 		_atributos sejam consistentes com o dataset armazenado
 		
-		Atributos:
+		Parâmetros:
 		
-		_dados	: dataframe ou matriz que armazena o dataset (default = [])
+		dados	: dataframe ou matriz que armazena o dataset (default = [])
 		'''
 		self.set_dados(dados)
 		self.atualiza_atributos()
@@ -43,7 +43,7 @@ class DatasetModel():
 	def ler_csv(self, nome):
 		'''Lê um arquivo csv e carrega DatasetModel com seus dados
 		
-		Atributos:
+		Parâmetros:
 		
 		nome	: string contendo o nome do arquivo csv
 		'''
@@ -57,7 +57,7 @@ class DatasetModel():
 	def remover_atributo(self, nomeAtributo):
 		'''Remove um atributo pelo nome dele e atualiza DatasetModel
 		
-		Atributos:
+		Parâmetros:
 		
 		nomeAtributo: string contendo o nome do atributo a ser removido
 		'''
