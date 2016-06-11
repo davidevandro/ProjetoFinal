@@ -3,10 +3,9 @@
 # Script Name		: test_model_dataset.py
 # Author			: David Martins
 # Created			: 09/06/2016
-# Last Modified		: 
-# Version			: 1.0.0
-
-# Modifications		: 
+# Last Modified		: 11/06/2016
+# Version			: 1.0.1
+# Modifications		: 1.0.1 - Adaptação dos testes para a refatoração da classe DatasetModel
 
 # Description		: Contém a classe de testes para a classe DatasetModel
 
@@ -14,7 +13,6 @@ import unittest2 as ut
 import pandas as pd
 import numpy as np
 from model  import datasetmodel as dm
-import csv
 import os
 import pandas.util.testing as pdt
 
@@ -22,74 +20,74 @@ class DatasetModelTest(ut.TestCase):
 	'''Classe de testes unitários da classe DatasetModel'''
 	
 	def test_dados_eh_dataframe(self):
-		'''Verifica se o atributo *dados* é do tipo pandas.DataFrame'''
+		'''Verifica se o atributo *_dados* é do tipo pandas.DataFrame'''
 		ds = dm.DatasetModel()
-		self.assertIsInstance(ds.dados, pd.DataFrame)
+		self.assertIsInstance(ds.get_dados(), pd.DataFrame)
 		
 	def test_atributos_eh_consistente_ds_vazio(self):
-		'''Verifica se o atributo *atributos* de DatasetModel eh consistente 
-		quando *dados* é vazio'''
+		'''Verifica se o atributo *_atributos* de DatasetModel eh consistente 
+		quando *_dados* é vazio'''
 		ds = dm.DatasetModel()
-		self.assertEquals(ds.atributos, [])
+		self.assertEquals([], ds.get_atributos())
 	
 	def test_atributos_eh_consistente_ds_cheio(self):
-		'''Verifica se o atributo *atributos* de DatasetModel eh consistente 
-		quando *dados* é não vazio'''
+		'''Verifica se o atributo *_atributos* de DatasetModel eh consistente 
+		quando *_dados* é não vazio'''
 		dados = np.zeros(shape = (500, 400))
 		ds = dm.DatasetModel(dados)
 		#o vetor de colunas é convertido para lista para ser possível a comparação
-		self.assertEquals(ds.atributos, pd.DataFrame(dados).columns.tolist())
+		self.assertEquals(pd.DataFrame(dados).columns.tolist(), ds.get_atributos())
 		
 	def test_natributos_eh_consistente_ds_vazio(self):
-		'''Verifica se o atributo *natributos* de DatasetModel eh consistente 
-		quando *dados* é vazio'''
+		'''Verifica se o atributo *_natributos* de DatasetModel eh consistente 
+		quando *_dados* é vazio'''
 		ds = dm.DatasetModel()
-		self.assertEquals(ds.natributos,0)
+		self.assertEquals(0, ds.get_natributos())
 		
 	def test_natributos_eh_consistente_ds_cheio(self):
-		'''Verifica se o atributo *natributos* de DatasetModel eh consistente 
-		quando *dados* é não vazio'''
+		'''Verifica se o atributo *_natributos* de DatasetModel eh consistente 
+		quando *_dados* é não vazio'''
 		dados = np.zeros(shape = (500, 400))
 		ds = dm.DatasetModel(dados)
-		self.assertEquals(ds.natributos, 400)
+		self.assertEquals(400, ds.get_natributos())
 		
 	def test_ninstancias_eh_consistente_ds_vazio(self):
-		'''Verifica se o atributo *ninstancias* de DatasetModel eh consistente 
-		quando *dados* é vazio'''
+		'''Verifica se o atributo *_ninstancias* de DatasetModel eh consistente 
+		quando *_dados* é vazio'''
 		ds = dm.DatasetModel()
-		self.assertEquals(ds.ninstancias,0)
+		self.assertEquals(0, ds.get_ninstancias())
 		
 	def test_ninstancias_eh_consistentes_ds_cheio(self):
-		'''Verifica se o atributo *ninstancias* de DatasetModel eh consistente 
-		quando *dados* é não vazio'''
+		'''Verifica se o atributo *_ninstancias* de DatasetModel eh consistente 
+		quando *_dados* é não vazio'''
 		dados = np.zeros(shape = (500, 400))
 		ds = dm.DatasetModel(dados)
-		self.assertEquals(ds.ninstancias, 500)
+		self.assertEquals(500, ds.get_ninstancias())
 	
 	def test_atualiza_atributos(self):
-		'''Verifica se o método atualiza_atributos atualiza os atributos *atributos*,
-		*natributos* e *ninstancias* quando dados é modificado'''
+		'''Verifica se o método atualiza_atributos atualiza os _atributos *_atributos*,
+		*_natributos* e *_ninstancias* quando *_dados* é modificado'''
 		ds = dm.DatasetModel()
 		dados = np.zeros(shape = (500, 400))
-		ds.dados = pd.DataFrame(dados)
+		ds.set_dados(dados)
 		ds.atualiza_atributos()
 		#o vetor de colunas é convertido para lista para ser possível a comparação
-		self.assertEquals(ds.atributos, pd.DataFrame(dados).columns.tolist())
-		self.assertEquals(ds.natributos, 400)
-		self.assertEquals(ds.ninstancias, 500)
+		self.assertEquals(pd.DataFrame(dados).columns.tolist(), ds.get_atributos())
+		self.assertEquals(400, ds.get_natributos())
+		self.assertEquals(500, ds.get_ninstancias())
 		
 	
 	def test_ler_csv_carrega_dataset(self):
 		'''Verifica se o método ler_csv le um arquivo csv existente e carrega 
-		o atributo *dados* corretamente'''
+		o atributo *_dados* corretamente'''
 		dados = np.zeros(shape = (500,400))
 		df = pd.DataFrame(dados)
-		df.columns = [str(i) for i in df.columns] #os nomes dos atributos tem que ser strings
+		df.columns = [str(i) for i in df.columns] #os nomes dos _atributos tem que ser strings
 		nomeArquivo = "teste.csv"
 		df.to_csv(nomeArquivo)
 		ds = dm.DatasetModel()
 		ds.ler_csv(nomeArquivo)
-		pdt.assert_frame_equal(ds.dados,df) #verifica se os dois dataframes são iguais
+		pdt.assert_frame_equal(df, ds.get_dados()) #verifica se os dois dataframes são iguais
 		os.remove(nomeArquivo)
 		
 	def test_remover_atributo_existente(self):
@@ -97,18 +95,13 @@ class DatasetModelTest(ut.TestCase):
 		dados = np.zeros(shape = (500,400))
 		ds = dm.DatasetModel(dados)
 		ds.remover_atributo(1)
-		self.assertFalse(1 in ds.atributos)
+		self.assertFalse(1 in ds.get_atributos())
 		
 	def test_remover_atributo_inexistente(self):
 		'''Verifica se o método remover_atributo avisa sobre um atributo inexistente'''
 		dados = np.zeros(shape = (500,400))
 		ds = dm.DatasetModel(dados)
-		self.assertFalse(ds.remover_atributo(800))
-		
-		
-				
-		
-	
+		self.assertFalse(ds.remover_atributo(800))	
 		
 if __name__ == "__main__":
 	ut.main()
