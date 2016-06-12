@@ -1,6 +1,6 @@
 # coding: latin1
 
-# Script Name		: datasetmodel.py
+# Script Name		: dataset.py
 # Author			: David Martins
 # Created			: 10/06/2016
 # Last Modified		: 11/06/2016
@@ -13,7 +13,7 @@
 
 import pandas as pd
 
-class DatasetModel():
+class Dataset(object):
 	'''Classe que encapsula o dataset e permite algumas operações
 	
 	Atributos:
@@ -24,7 +24,7 @@ class DatasetModel():
 	_ninstancias	: inteiro que especifica quantas instâncias o dataset tem
 	'''
 	
-	def __init__(self, dados = []):
+	def __init__(self, dados = [], parent = None):
 		'''Construtor da classe DatasetModel. Garante que dados seja do tipo dataframe e que os demais 
 		_atributos sejam consistentes com o dataset armazenado
 		
@@ -101,5 +101,3 @@ class DatasetModel():
 	def get_natributos(self):
 		'''Retorna o atributo *_natributos*'''
 		return self._natributos
-	
-	
