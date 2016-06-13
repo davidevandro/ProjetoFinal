@@ -11,7 +11,10 @@
 
 # Description		: Contém a classe que encapsula o dataset e permite algumas operações
 
+import os
+
 import pandas as pd
+
 
 class Dataset(object):
 	'''Classe que encapsula o dataset e permite algumas operações
@@ -21,7 +24,9 @@ class Dataset(object):
 	_dados		: dataframe que armazena os dados do dataset
 	_atributos	: lista de strings que armazena o nome dos _atributos
 	_natributos	: inteiro que especifica quantos _atributos o dataset tem
-	_ninstancias	: inteiro que especifica quantas instâncias o dataset tem
+	_ninstancias: inteiro que especifica quantas instâncias o dataset tem
+	_marcados   : lista de booleanos que armazena se um atributo está selecionado
+	_nomearquivo: nome do arquivo carregado com ler_csv
 	'''
 	
 	def __init__(self, dados = [], parent = None):
@@ -32,6 +37,7 @@ class Dataset(object):
 		
 		dados	: dataframe ou matriz que armazena o dataset (default = [])
 		'''
+		self._nomearquivo = ""
 		self.set_dados(dados)
 		self.atualiza_atributos()
 		
@@ -40,6 +46,7 @@ class Dataset(object):
 		self._atributos = self._dados.columns.tolist()
 		self._natributos = self._dados.shape[1]
 		self._ninstancias = self._dados.shape[0]
+		self._marcados = [False] * self._natributos
 		
 	def ler_csv(self, nome):
 		'''Lê um arquivo csv e carrega DatasetModel com seus dados
@@ -55,32 +62,21 @@ class Dataset(object):
 		'''
 		try:
 			self._dados = pd.DataFrame.from_csv(nome)
+			
+			#pega somente o nome do arquivo sem o seu endereço
+			__, nomeArquivo = os.path.split(nome)
+			self._nomearquivo = nomeArquivo
+			
 			self.atualiza_atributos()
 			return True
 		except:
 			return False
 	
-	def remover_atributos(self, atributos):
-		'''Remove atributos pelos nomes deles e atualiza DatasetModel
-		
-		Parâmetros:
-		
-		atributos: lista de strings contendo os nomes do atributos a serem removido
-		
-		Retorna:
-		
-		True:	se conseguir remover todos os atributos
-		False:	se algum atributo não for válido
-		'''
-		for elemento in atributos:
-			if elemento not in self._atributos:
-				return False
-			
-		for elemento in atributos:
-			self._dados.pop(elemento)
-					
+	def remover_atributos(self):
+		'''Remove atributos pelos nomes deles e atualiza DatasetModel'''
+		indices_a_manter = [not i for i in self._marcados]
+		self._dados = self._dados.loc[:,indices_a_manter]
 		self.atualiza_atributos()
-		return True
 		
 	def get_dados(self):
 		'''Retorna o atributo *_dados*'''
@@ -89,6 +85,7 @@ class Dataset(object):
 	def set_dados(self,dados):
 		'''Atribui o valor *dados* ao atributo *_dados*'''
 		self._dados = pd.DataFrame(dados)
+		self.atualiza_atributos()
 	
 	def get_atributos(self):
 		'''Retorna o atributo *_atributos*'''
@@ -101,3 +98,15 @@ class Dataset(object):
 	def get_natributos(self):
 		'''Retorna o atributo *_natributos*'''
 		return self._natributos
+	
+	def get_nomearquivo(self):
+		'''Retorna o atributo *_nomearquivo*'''
+		return self._nomearquivo
+	
+	def get_marcados(self):
+		'''Retorna o atributo *_marcados*'''
+		return self._marcados
+	
+	def set_marcados(self, index, value):
+		'''Atribui o valor *value* para *_marcados[index]*'''
+		self._marcados[index] = value
